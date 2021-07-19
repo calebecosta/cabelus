@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<meta charset="utf-8"/>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+	<title>Procuração</title>
+</head>
+<body>
+  <div style="max-width: 80%;margin: auto; line-height: 30px; text-align: justify;">
+    <div style="text-align: center; height: 40px; padding-top: 5%;">
+      <b><u>PROCURAÇÃO</u></b>
+    </div>
+
+    <div>
+      <b>Outorgante</b>: {{this.nome}}, brasileiro(a), 
+      portador(a) do CPF {{this.cpf}} e do RG 
+      {{this.rg}}, expedido pela SSP/ES, {{this.estadocivil}}, 
+      pescador(a), residente e domiciliado na {{this.endereco}}.
+    </div>
+    
+    <br>
+    <div>
+      <b>Outorgados</b>: Roberta Soares Cunha de Castro, brasileira, advogada, 
+      casada, inscrita na OAB/ES 32.342 e no CPF 100.152.327-00 e Rafael Valença 
+      de Castro, brasileiro, advogado, casado, inscrito na OAB/ES 32.555 e CPF 
+      080.423.837-54, ambos com escritório na Rua Itacibá 135, sala 1116-C, 
+      Praia de Itaparica, Vila Velha/ES, Cep 29.102-280.
+    </div>
+    
+    <br>
+    <div>
+      <b>Poderes</b>: Pelo presente instrumento particular de procuração, o 
+      outorgante nomeia e constitui os outorgados seus procuradores para 
+      defender seus interesses, com a cláusula ad judicia et extra para o 
+      foro em geral, podendo propor, variar e desistir de ações, em qualquer 
+      Juízo, Instância ou Tribunal, administrativa ou judicialmente, confessar,
+      transigir, desistir, receber, dar quitação e aderir a ações coletivas, 
+      podendo, ainda, substabelecer, atos específicos que busquem o direito 
+      de receber indenizações, incluindo dano moral, dano material e lucro 
+      cessante, relacionadas a(ao) {{this.acp.titulo}}.
+
+    </div>
+
+    <br>
+
+    <div style="text-align: left; margin-bottom: 50px">
+      Vitória.ES, {{this.data}}.
+    </div>
+    <div style="text-align: center; height: 80px; margin-top: 100px">
+     <img style="width: 250px" src="{{this.assinatura}}" alt="Assinatura">
+    <br>
+    ________________________________________________________________________
+    <br>
+    {{this.nome}}  
+    </div>
+  </div>
+</body>
+</html>

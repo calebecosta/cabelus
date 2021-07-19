@@ -1,0 +1,48 @@
+version: '3.3'
+services:
+  ### postgres container
+  cabelus-postgres:
+    image: postgres
+    container_name: cabelus-postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - cabelus
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=cabelus
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=cabelus@789
+      - TZ=America/Sao_Paulo
+
+
+  ### pgadmin container
+  cabelus-pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - 8080:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=db@cabelus.com.br
+      - PGADMIN_DEFAULT_PASSWORD=cabelus@789
+    depends_on:
+      - cabelus-postgres
+    links:
+      - cabelus-postgres
+    networks:
+      - cabelus
+
+  cabelus-redis:
+    image: redis:alpine
+    container_name: cabelus-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - ./redis:/data
+    ports:
+      - 6379:6379
+    networks:
+      - cabelus
+
+networks:
+  cabelus:
+    driver: bridge

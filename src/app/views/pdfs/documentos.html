@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<meta charset="utf-8"/>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+    <title>Documentos Pessoais</title>
+    <style>
+        table {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 4%;
+        }
+        th {
+            text-align: center;
+            padding-bottom: 2%;
+        }
+        td {
+            text-align: center;
+        }
+        img {
+            vertical-align: top;
+        }
+        .single-page {
+            page-break-after: always;
+        }
+        .single-page:last-child {
+            page-break-after: auto;
+        }
+    </style>
+</head>   
+<body style="height: 100%;">
+    {{#each pescadores}} 
+    {{#if ../documentosPessoais}}
+    <div class="single-page" style="max-width: 80%;margin: auto; line-height: 30px; text-align: justify;">
+        <div style="text-align: center; height: 40px; padding-top: 4%;">
+        <b><u>DOCUMENTOS PESSOAIS</u></b>
+        <br>
+        <b> {{this.nome}} - {{this.cpf}} </b>
+        <br>
+        </div>
+        <div style="text-align: center; height: 40px; padding-top: 5%;">
+            <table>
+                <tr>
+                    <th><b>CPF</b></th>
+                    <th><b>RG</b></th>
+                </tr>
+                <tr>
+                    <td style="width: 170px"><img style="width: 170px" src="{{this.fotocpf}}" alt="CPF"></td>
+                    <td>
+                        <img style="width: 170px" src="{{this.fotorg}}" alt="RG">
+                        <img style="width: 170px" src="{{this.fotorgverso}}" alt="RG Verso">
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th><b>Documento de Pesca</b></th>
+                </tr>
+                <tr>
+                    <td>
+                        <img style="width: 170px" src="{{this.fotodocumentopesca}}" alt="Comprovante de Residência">
+                        <img style="width: 170px" src="{{this.fotodocumentopescaverso}}" alt="Comprovante de Residência Verso">
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    {{#if this.fotocomprovanteresidencia}}<th><b>Comprovante de Residência</b></th>{{/if}}
+                    {{#if this.fotocertidao}}<th><b>Certidão de Nascimento ou Casamento</b></th>{{/if}}
+                    {{#if this.fotoresidenciapaiconjuge}}<th><b>Comprovante de Residência em nome dos pais ou cônjuge</b></th>{{/if}}
+                </tr>
+                <tr>
+                    {{#if this.fotocomprovanteresidencia}}<td><img style="width: 170px" src="{{this.fotocomprovanteresidencia}}" alt="Comprovante de Residência"></td>{{/if}}
+                    {{#if this.fotocertidao}}<td><img style="width: 170px" src="{{this.fotocertidao}}" alt="Certidão de Nascimento ou Casamento"></td>{{/if}}
+                    {{#if this.fotoresidenciapaiconjuge}}<td><img style="width: 170px" src="{{this.fotoresidenciapaiconjuge}}" alt="Comprovante de Residência em nome dos pais ou cônjuge"></td>{{/if}}
+                </tr>
+            </table>
+        </div>
+    </div>
+    {{/if}}
+    {{#each this.adesoes}}
+    {{#if ../../termoAdesao}} 
+    <div class="single-page" style="max-width: 80%;margin: auto; line-height: 30px; text-align: justify;">
+        <div style="text-align: center; height: 40px; padding-top: 5%;">
+        <b><u>TERMO DE ADESÃO E COMPROMISSO</u></b>
+        </div>
+        <div>
+            Eu, {{../this.nome}}, portador do CPF {{../this.cpf}}, 
+            residente na {{../this.endereco}}, na forma do Art. 5º, 
+            inciso XXI da CF, venho, por meio do presente termo, manifestar 
+            meu interesse e minha autorização para aderir formalmente a 
+            Ação Coletiva (Ação Civil Pública) proposta pela Confederação 
+            Nacional dos Pescadores e Aquicultores (CNPA), inscrita no 
+            CNPJ 01.633.684/0001-21, atuando em substituição processual, 
+            visando a defesa dos direitos e interesses da categoria representada, 
+            buscando especificamente {{this.acp.objeto}}, em desfavor do(a) {{this.acp.responsavel}}.
+        </div>
+        
+        <br>
+        <div>
+            Por ser beneficiado pelos direitos decorrentes da atuação do escritório 
+            jurídico eleito pela Confederação Nacional dos Pescadores e Aquicultores 
+            (CNPA) na ação que esta promove em substituição processual, assumo os 
+            compromissos previstos no contrato de prestação de serviço jurídico, nos 
+            termos do parágrafo 7º do artigo 22 da Lei 8.904 de 1994 (Estatuto da OAB), 
+            reconhecendo os honorários advocatícios contratuais, permitindo seu desconto 
+            na indenização individual a ser recebida, ratificando o patrocínio desenvolvido 
+            nos autos da ação promovida por estes advogados.
+        </div>
+
+        <br>
+
+        <div style="text-align: left; margin-bottom: 50px">
+        Vitória.ES, {{this.data}}.
+        </div>
+        <div style="text-align: center; height: 80px; margin-top: 100px">
+        <img style="width: 250px" src="{{this.assinatura}}" alt="Assinatura">
+        <br>
+        ________________________________________________________________________
+        <br>
+        {{this.nome}}  
+        </div>
+    </div>
+    {{/if}} 
+    {{#if ../../procuracao}} 
+    <div class="single-page" style="max-width: 80%;margin: auto; line-height: 30px; text-align: justify;">
+        <div style="text-align: center; height: 40px; padding-top: 5%;">
+          <b><u>PROCURAÇÃO</u></b>
+        </div>
+    
+        <div>
+          <b>Outorgante</b>: {{../this.nome}}, brasileiro(a), 
+          portador(a) do CPF {{../this.cpf}} e do RG 
+          {{../this.rg}}, expedido pela SSP/ES, {{../this.estadocivil}}, 
+          pescador(a), residente e domiciliado na {{../this.endereco}}.
+        </div>
+        
+        <br>
+        <div>
+          <b>Outorgados</b>: Roberta Soares Cunha de Castro, brasileira, advogada, 
+          casada, inscrita na OAB/ES 32.342 e no CPF 100.152.327-00 e Rafael Valença 
+          de Castro, brasileiro, advogado, casado, inscrito na OAB/ES 32.555 e CPF 
+          080.423.837-54, ambos com escritório na Rua Itacibá 135, sala 1116-C, 
+          Praia de Itaparica, Vila Velha/ES, Cep 29.102-280.
+        </div>
+        
+        <br>
+        <div>
+          <b>Poderes</b>: Pelo presente instrumento particular de procuração, o 
+          outorgante nomeia e constitui os outorgados seus procuradores para 
+          defender seus interesses, com a cláusula ad judicia et extra para o 
+          foro em geral, podendo propor, variar e desistir de ações, em qualquer 
+          Juízo, Instância ou Tribunal, administrativa ou judicialmente, confessar,
+          transigir, desistir, receber, dar quitação e aderir a ações coletivas, 
+          podendo, ainda, substabelecer, atos específicos que busquem o direito 
+          de receber indenizações, incluindo dano moral, dano material e lucro 
+          cessante, relacionadas a(ao) {{this.acp.titulo}}.
+        </div>
+    
+        <br>
+    
+        <div style="text-align: left; margin-bottom: 50px">
+          Vitória.ES, {{this.data}}.
+        </div>
+        <div style="text-align: center; height: 80px; margin-top: 100px">
+         <img style="width: 250px" src="{{this.assinatura}}" alt="Assinatura">
+        <br>
+        ________________________________________________________________________
+        <br>
+        {{../this.nome}}  
+        </div>
+    </div>
+    {{/if}}
+    {{/each}}
+    {{/each}}
+</body>
+</html>
