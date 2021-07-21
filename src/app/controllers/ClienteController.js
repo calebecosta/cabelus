@@ -1,33 +1,15 @@
 import * as Yup from 'yup';
-import Usuario from '../models/Usuario';
+import Cliente from '../models/Cliente';
 import GrupoSistema from '../models/GrupoSistema';
 import FuncaoSistema from '../models/FuncaoSistema';
 
-class UsuarioController {
+class ClienteController {
   async index(req, res) {
     try {
-      const usuario = await Usuario.findAll({
-        attributes: ['id','login','nome', 'email'],
-        include: [
-          {
-            model: GrupoSistema,
-            as: 'grupo',
-            attributes: {
-              exclude: ['createdAt', 'updatedAt', 'deletedAt'],
-            },
-            include: [
-              {
-                model: FuncaoSistema,
-                as: 'funcoes',
-                attributes: {
-                  exclude: ['createdAt', 'updatedAt', 'deletedAt'],
-                },
-              },
-            ],
-          },
-        ],
+      const cliente = await Cliente.findAll({
+        attributes: ['id', 'endereco','nome', 'email'],
       });
-      return res.status(200).json(usuario);
+      return res.status(200).json(cliente);
     } catch (error) {
       return res
         .status(500)
@@ -37,7 +19,7 @@ class UsuarioController {
 
   async show(req, res) {
     try {
-      const usuario = await Usuario.findOne({
+      const cliente = await Cliente.findOne({
         where: { id: req.params.id },
         attributes: {
           exclude: [
@@ -48,32 +30,9 @@ class UsuarioController {
             'gruposistema_id',
           ],
         },
-        include: [
-          {
-            model: GrupoSistema,
-            as: 'grupo',
-            attributes: {
-              exclude: ['createdAt', 'updatedAt', 'deletedAt'],
-            },
-            include: [
-              {
-                model: FuncaoSistema,
-                as: 'funcoes',
-                through: { attributes: [] }, // nao retornar dados da tabela pivot
-                attributes: {
-                  exclude: [
-                    'createdAt',
-                    'updatedAt',
-                    'deletedAt',
-                    'funcaosistema_id',
-                  ],
-                },
-              },
-            ],
-          },
-        ],
+
       });
-      return res.status(200).json(usuario);
+      return res.status(200).json(cliente);
     } catch (error) {
       return res
         .status(500)
@@ -82,20 +41,16 @@ class UsuarioController {
   }
 
   async store(req, res) {
-    // criacao de usuario
+    // criacao de cliente
     const schema = Yup.object().shape({
-      gruposistema_id: Yup.string().required(() =>
-        res.status(400).json({ error: `Preencha o campo "Grupo"!` })
-      ),
       nome: Yup.string().required(() =>
         res.status(400).json({ error: `Preencha o campo "Nome"!` })
       ),
-      email: Yup.string().required(() =>
-        res.status(400).json({ error: `Preencha o campo "Email"!` })
-      ),
-      login: Yup.string().required(() =>
-        res.status(400).json({ error: `Preencha o campo "Login"!` })
-      ),
+      email: Yup.string()
+        .email()
+        .required(() =>
+          res.status(400).json({ error: `Preencha o campo "Email"!` })
+        ),
       senha: Yup.string()
         .required(() =>
           res.status(400).json({ error: `Preencha o campo "Senha"!` })
@@ -117,25 +72,15 @@ class UsuarioController {
         .json({ error: 'Verifique os campos obrigatórios!' });
     }
     try {
-      const usuarioExiste = await Usuario.findOne({
+      const clienteExiste = await Cliente.findOne({
         where: { email: req.body.email },
       });
-      // verifico se o usuario ja nao existe
-      if (usuarioExiste) {
-        return res.status(400).json({ error: 'Usuário já existente!' });
+      // verifico se o cliente ja nao existe
+      if (clienteExiste) {
+        return res.status(400).json({ error: 'Cliente já existente!' });
       }
 
-      if (req.body.gruposistema_id) {
-        const gruposistema = await GrupoSistema.findByPk(
-          req.body.gruposistema_id
-        );
-        if (!gruposistema)
-          return res
-            .status(400)
-            .json({ error: 'Grupo de sistema Inexistente!' });
-      }
-
-      const { id, nome, email } = await Usuario.create(req.body);
+      const { id, nome, email } = await Cliente.create(req.body);
 
       return res.status(200).json({
         id,
@@ -143,7 +88,7 @@ class UsuarioController {
         email,
       });
     } catch (error) {
-        console.log(error);
+      console.log(error);
       return res
         .status(500)
         .json({ error: 'Ops... estamos passando por uma instabilidade!' });
@@ -151,7 +96,7 @@ class UsuarioController {
   }
 
   async update(req, res) {
-    // atualizacao de dados do usuario
+    // atualizacao de dados do cliente
     const schema = Yup.object().shape({
       nome: Yup.string(),
       email: Yup.string().email(),
@@ -182,28 +127,28 @@ class UsuarioController {
       return res.status(400).json({ error: 'As senhas não iguais!' });
     }
     try {
-      if (req.tipo_usuario !== 'usuario')
+      if (req.tipo_cliente !== 'cliente')
         return res
           .status(200)
           .json({ error: 'Tipo de usuário não permitido!' });
       const { email, senhaAntiga } = req.body;
-      let usuario = null;
-      if (req.params.id) usuario = await Usuario.findByPk(req.params.id);
+      let cliente = null;
+      if (req.params.id) cliente = await Cliente.findByPk(req.params.id);
       // find by primary key
-      else if (req.usuario_id) usuario = await Usuario.findByPk(req.usuario_id);
+      else if (req.cliente_id) cliente = await Cliente.findByPk(req.cliente_id);
       // find by primary key
       else return res.status(400).json({ error: 'Informe o Usuário!' });
 
-      if (email && email !== usuario.email) {
-        const usuarioExiste = await Usuario.findOne({
+      if (email && email !== cliente.email) {
+        const clienteExiste = await Cliente.findOne({
           where: { email },
         });
-        if (usuarioExiste) {
+        if (clienteExiste) {
           return res.status(400).json({ error: 'Usuário já existente!' });
         }
       }
 
-      if (senhaAntiga && !(await usuario.verificaSenha(senhaAntiga))) {
+      if (senhaAntiga && !(await cliente.verificaSenha(senhaAntiga))) {
         return res.status(400).json({ error: 'Senha não corresponde!' });
       }
 
@@ -217,9 +162,9 @@ class UsuarioController {
             .json({ error: 'Grupo de sistema Inexistente!' });
       }
 
-      const { id } = await usuario.update(req.body);
+      const { id } = await cliente.update(req.body);
 
-      const usuarioReturn = await Usuario.findOne({
+      const clienteReturn = await Cliente.findOne({
         where: { id },
         attributes: ['id', 'nome', 'email'],
         include: [
@@ -247,7 +192,7 @@ class UsuarioController {
           },
         ],
       });
-      return res.status(200).json(usuarioReturn);
+      return res.status(200).json(clienteReturn);
     } catch (error) {
       return res
         .status(500)
@@ -262,7 +207,7 @@ class UsuarioController {
         .json({ error: 'Informe o usuário que deseja excluir!' });
     }
     try {
-      await Usuario.destroy({
+      await Cliente.destroy({
         where: { id: req.params.id },
       });
       return res.status(200).json({ success: `Usuário excluido com sucesso!` });
@@ -274,4 +219,4 @@ class UsuarioController {
   }
 }
 
-export default new UsuarioController();
+export default new ClienteController();

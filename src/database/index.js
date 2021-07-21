@@ -4,16 +4,17 @@ import databaseConfig from '../config/database';
 import FuncaoSistema from '../app/models/FuncaoSistema';
 import GrupoSistema from '../app/models/GrupoSistema';
 import Usuario from '../app/models/Usuario';
-import Estado from '../app/models/Estado';
-import Cidade from '../app/models/Cidade';
+import Agendamento from '../app/models/Agendamento';
+import Cliente from '../app/models/Cliente';
+import Colaborador from '../app/models/Colaborador';
 
 const models = [
   FuncaoSistema,
   GrupoSistema,
   Usuario,
-  Estado,
-  Cidade,
-
+  Agendamento,
+  Cliente,
+  Colaborador
 ];
 
 class Database {

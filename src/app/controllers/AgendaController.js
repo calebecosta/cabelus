@@ -1,7 +1,5 @@
 import * as Yup from 'yup';
 import { Sequelize, Op } from 'sequelize';
-import Cidade from '../models/Cidade';
-import Estado from '../models/Estado';
 import Usuario from '../models/Usuario';
 import databaseConfig from '../../config/database';
 import NovoAgendamentoMail from '../jobs/NovoAgendamentoMail';
