@@ -204,17 +204,17 @@ class ColaboradorController {
     if (!req.params.id) {
       return res
         .status(500)
-        .json({ error: 'Informe o usuário que deseja excluir!' });
+        .json({ error: 'Informe o colaborador que deseja excluir!' });
     }
     try {
       await Colaborador.destroy({
         where: { id: req.params.id },
       });
-      return res.status(200).json({ success: `Usuário excluido com sucesso!` });
+      return res.status(200).json({ success: `Colaborador excluido com sucesso!` });
     } catch (error) {
       return res
         .status(500)
-        .json({ error: `Ops... Não foi possível excluír o usuário.` });
+        .json({ error: `Ops... Não foi possível excluír o colaborador.` });
     }
   }
 }

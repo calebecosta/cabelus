@@ -31,7 +31,8 @@ class Colaborador extends Model {
 
     return this;
   }
-  verificaSenha(senha) {
+
+   verificaSenha(senha) {
     /**
      * retorna true se a senha informada pelo usuario e igual a registrada no banco
      */

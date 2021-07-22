@@ -204,17 +204,17 @@ class ClienteController {
     if (!req.params.id) {
       return res
         .status(500)
-        .json({ error: 'Informe o usuário que deseja excluir!' });
+        .json({ error: 'Informe o cliente que deseja excluir!' });
     }
     try {
       await Cliente.destroy({
         where: { id: req.params.id },
       });
-      return res.status(200).json({ success: `Usuário excluido com sucesso!` });
+      return res.status(200).json({ success: `Cliente excluido com sucesso!` });
     } catch (error) {
       return res
         .status(500)
-        .json({ error: `Ops... Não foi possível excluír o usuário.` });
+        .json({ error: `Ops... Não foi possível excluír o cliente.` });
     }
   }
 }

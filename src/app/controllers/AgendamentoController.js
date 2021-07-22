@@ -1,18 +1,68 @@
 import * as Yup from 'yup';
 import { Sequelize, Op } from 'sequelize';
 
+import { parseISO,differenceInHours,format,endOfHour,startOfHour, formatDistance, formatRelative, subDays } from 'date-fns'
 import Colaborador from '../models/Colaborador';
 import databaseConfig from '../../config/database';
 import NovoAgendamentoMail from '../jobs/NovoAgendamentoMail';
 import Queue from '../../lib/Queue';
 import Agendamento from '../models/Agendamento';
+import Usuario from '../models/Usuario';
+import GrupoSistema from '../models/GrupoSistema';
+import FuncaoSistema from '../models/FuncaoSistema';
 import Cliente from '../models/Cliente';
 
 
 class AgendamentoController {
-  async index(req, res) {
+  async index(req, res) { 
     try {
+      const usuario = await Usuario.findOne({
+        where: { id: req.usuario_id},
+        attributes: {
+          exclude: [
+            'createdAt',
+            'updatedAt',
+            'deleted_at',
+            'senha_hash',
+            'gruposistema_id',
+          ],
+        },
+        include: [
+          {
+            model: GrupoSistema,
+            as: 'grupo',
+            attributes: {
+              exclude: ['createdAt', 'updatedAt', 'deletedAt'],
+            },
+            include: [
+              {
+                model: FuncaoSistema,
+                as: 'funcoes',
+                through: { attributes: [] }, // nao retornar dados da tabela pivot
+                attributes: {
+                  exclude: [
+                    'createdAt',
+                    'updatedAt',
+                    'deletedAt',
+
+                  ],
+                },
+              },
+            ],
+          },
+        ],
+      });
+
+
+      let whereStatement = {};
+      if(usuario){
+        whereStatement = "";
+      }else{
+        whereStatement.id = req.usuario_id;
+      }
+
       const agendamento = await Agendamento.findAll({
+        where: whereStatement,
         attributes: {
           exclude: ['createdAt', 'updatedAt', 'deletedAt'],
         },
@@ -21,14 +71,14 @@ class AgendamentoController {
             model: Colaborador,
             as: 'colaboradores',
             attributes: {
-              exclude: ['createdAt', 'updatedAt', 'deletedAt'],
+              exclude: ['createdAt','senha_hash', 'updatedAt', 'deletedAt'],
             },
           },
           {
             model: Cliente,
             as: 'clientes',
             attributes: {
-              exclude: ['createdAt', 'updatedAt', 'deletedAt'],
+              exclude: ['createdAt', 'senha_hash','updatedAt', 'deletedAt'],
             },
           }
         ],
@@ -45,7 +95,6 @@ class AgendamentoController {
 
   async show(req, res) {
     try {
-    
       const agendamento = await Agendamento.findOne({
         where: { id: req.params.id },
         attributes: {
@@ -67,6 +116,9 @@ class AgendamentoController {
       colaborador_id: Yup.string().required(() =>
         res.status(400).json({ error: `Preencha o cabelereiro para o qual deseja agendar !` })
       ),
+      data: Yup.string().required(() =>
+        res.status(400).json({ error: `Preencha o campo data!` })
+      ),
     });
    
 
@@ -84,24 +136,26 @@ class AgendamentoController {
     const transaction = await db.transaction();
     try {
       const colaborador = await Colaborador.findByPk(req.body.colaborador_id);
-
-      //restrigindo pela existencia de um agendamento com data e hora iguais para o dia selecionado 
+    
+       if (!colaborador)
+        return res.status(400).json({ error: `Cabelereiro não identificado! Por favor, tente novamente.` });
+        
+      //data virá do front
+      const hora_inicio = startOfHour(parseISO(req.body.data));
+      const hora_fim = endOfHour(parseISO(req.body.data));
       
-      const isRange =  await Colaborador.findAll({
+        const isRange =  await Agendamento.findAll({
         where: {
-          [Op.and]: db.literal(`EXISTS(SELECT * FROM "agendamento" WHERE "agendamento"."data" = '${req.body.data}'  AND "agendamento"."colaborador_id" = ${req.body.colaborador_id})`)
+          colaborador_id : req.body.colaborador_id,
+          data: {
+            [Op.between]: [hora_inicio,hora_fim]
+          },
         }
       });
-
+      
       if (Array.isArray(isRange) && isRange.length)
-         return res.status(400).json({ error: `Agendamento não disponivel para este cabelereiro. Por favor, tente novamente.` });
+         return res.status(400).json({ error: `Horário/dia não disponivel para este cabelereiro. Por favor, tente novamente.` });
 
-
-
-      if (!colaborador)
-        return res.status(400).json({ error: `Cabelereiro não identificado!` });
-        //data virá do front
-        req.body.data = new Date(Date.now()).toISOString();
 
       const agendamento = await Agendamento.create(
         {
@@ -110,8 +164,8 @@ class AgendamentoController {
         { transaction }
       );
 
-      const arrayEmails = [];
-        arrayEmails.push(colaborador.email);
+      // const arrayEmails = [];
+      //   arrayEmails.push(colaborador.email);
 
       // await Queue.add(NovoAgendamentoMail.key, {
       //   objeto: agendamento.objeto,
@@ -119,6 +173,7 @@ class AgendamentoController {
       // });
       // If the execution reaches this line, no errors were thrown.
       // We commit the transaction.
+
       await transaction.commit();
       const { id, titulo } = agendamento;
       return res.status(200).json({
@@ -143,6 +198,24 @@ class AgendamentoController {
         .status(500)
         .json({ error: 'Informe o agendamento que deseja excluir!' });
     }
+
+    const agendamento = await Agendamento.findByPk(req.params.id);
+    const data_atual = new Date();
+
+    if(!agendamento){
+      return res
+      .status(500)
+      .json({ error: 'Agendamento inexistente.' });
+    }
+
+    if(differenceInHours(data_atual,agendamento.data) > 2) {
+      console.log("diff horas>",differenceInHours(data_atual,agendamento.data))
+      return res
+      .status(500)
+      .json({ error: 'Agendamento não pode ser cancelado por estar fora do período carencia (2h).' });
+    }
+    
+   
     try {
       await Agendamento.destroy({
         where: { id: req.params.id },

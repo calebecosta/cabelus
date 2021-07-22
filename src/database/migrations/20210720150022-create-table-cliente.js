@@ -19,7 +19,6 @@ module.exports = {
     endereco: {
       type: Sequelize.STRING,
       allowNull: false,
-      unique: true,
     },
     senha_hash: {
       type: Sequelize.STRING,
