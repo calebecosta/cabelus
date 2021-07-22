@@ -71,15 +71,19 @@ class ClienteController {
         .status(400)
         .json({ error: 'Verifique os campos obrigatórios!' });
     }
-    try {
-      const clienteExiste = await Cliente.findOne({
-        where: { email: req.body.email },
-      });
-      // verifico se o cliente ja nao existe
-      if (clienteExiste) {
-        return res.status(400).json({ error: 'Cliente já existente!' });
-      }
 
+    const clienteExiste = await Cliente.findOne({
+      where: { email: req.body.email },
+    });
+    
+    // verifico se o cliente ja nao existe
+    if (clienteExiste) {
+      return res.status(400).json({ error: 'Cliente já existente!' });
+    }
+
+
+    try {
+     
       const { id, nome, email } = await Cliente.create(req.body);
 
       return res.status(200).json({

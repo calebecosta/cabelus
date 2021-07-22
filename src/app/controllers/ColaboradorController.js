@@ -80,13 +80,30 @@ class ColaboradorController {
         return res.status(400).json({ error: 'Colaborador já existente!' });
       }
 
-      const { id, nome, email } = await Colaborador.create(req.body);
+    // const senhaAletoria = Math.random()
+    // .toString(36)
+    // .slice(-10);
+    // req.body.senha = senhaAletoria;
 
-      return res.status(200).json({
-        id,
-        nome,
-        email,
-      });
+    const { id, nome, email } = await Colaborador.create(req.body);
+
+    // await Mail.sendMail({
+    //   to: `${nome} <${email}>`,
+    //   cc: 'Cabelus <contato@cabelus.com.br>',
+    //   subject: 'Acesso - Cabelus ',
+    //   template: 'NovoCadastroColaborador',
+    //   context: {
+    //     nome: usuario.nome,
+    //     senha: string,
+    //     footer: false
+    //   }
+    // });
+    
+  
+    return res.status(200).json({
+      success: `Enviamos um link com a instruções para acesso ao sistema.`
+    });
+
     } catch (error) {
       console.log(error);
       return res

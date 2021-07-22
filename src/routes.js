@@ -85,7 +85,8 @@ routes.delete('/cliente/:id', ClienteController.delete); // Deletar um cliente
  * Inicio rotas agendamento
  */
 routes.post('/agendamento', AgendamentoController.store); // Criar um agendamento
-routes.get('/agendamento/', AgendamentoController.index); // Listar todos agendamentos realizados (para o current usuario logado e caso seja admin lista todos)
+routes.get('/agendamento/', AgendamentoController.index); // Listar todos agendamentos realizados (para o current usuario )
+routes.get('/agendamentoadm/', AgendamentoController.indexAdmFilter); // Listar todos agendamentos realizados (para o admin lista todos)
 routes.get('/agendamento/:id', AgendamentoController.show); // Listar um agendamento
 routes.delete('/agendamento/:id', AgendamentoController.delete); // Deletar um cliente
 

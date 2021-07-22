@@ -70,10 +70,12 @@ class SessionController {
         return res.status(400).json({ error: 'Senha incorreta!' });
       }
       usuario.senha_hash = null;
+      
+     
 
       return res.json({
         usuario,
-        tipo:tipo_usuario,
+        tipo_usuario,
         token: jwt.sign({ id: usuario.id, tipo_usuario }, authConfig.secret, {
           expiresIn: authConfig.expiresIn,
         }),

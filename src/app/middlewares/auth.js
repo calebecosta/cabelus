@@ -20,6 +20,7 @@ export default async (req, res, next) => {
      */
     const decoded = await promisify(jwt.verify)(token, authConfig.secret);
     req.usuario_id = decoded.id;
+    req.tipo_usuario = decoded.tipo_usuario;
     return next();
   } catch (error) {
     return res.status(401).json({ error: 'Token Inválido!' });
